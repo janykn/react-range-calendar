@@ -78,7 +78,7 @@
 
 .day.in-range {
   background-color: rgba(0, 0, 0, 0.8);
-  color: black;
+  color: white;
 }
 
 .year-month-selector {
@@ -128,7 +128,7 @@
 
 .year.selected,
 .month.selected {
-  background-color: #007bff;
+  background-color: black;
   color: white;
 }
 
@@ -228,13 +228,13 @@
 }
 
 .light-theme .day.selected {
-  background-color: #007bff;
+  background-color: black;
   color: #fff;
-  border: 1px solid #007bff;
+  border: 1px solid black;
 }
 
 .light-theme .day.in-range {
-  background-color: rgba(0, 123, 255, 0.8);
+  background-color: rgba(255, 255, 255, 0.8);
   color: #fff;
 }
 
@@ -250,11 +250,11 @@
 }
 
 .light-theme .arrow-icon {
-  background-color: #007bff;
+  background-color: black;
   color: #fff;
 }
 
 .light-theme .arrow-icon:hover {
-  background-color: #0056b3;
+  background-color: black;
   color: #fff;
 }

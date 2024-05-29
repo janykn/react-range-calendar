@@ -1,17 +1,44 @@
-import React from "react";
-import DateRangePicker from "./DateRangePicker";
+import React, { useState } from "react";
+import {DateRangePicker} from "react-ranged-datepicker";
 import "./App.css";
 
 const App = () => {
-  //(Jan(0),...., Dec(11)) January is 0th month and Dec is 11th month. it will be (YYYY, MM-1, DD) format for passsing dates as props
-  const minDate = new Date(2002, 6, 1); // January 1, 2022 
-  const maxDate = new Date(2023, 11, 31); // December 31, 2023
-  const initialStartDate = new Date(2023, 6, 14);
+  const minDate = new Date(2023, 11, 1); // January 1, 2023
+  const maxDate = new Date(2029, 1, 2); // February 2, 2024
+  const initialStartDate = new Date(2025, 6, 14); // May 14, 2023
+
+  const [selectedDates, setSelectedDates] = useState({
+    startDate: null,
+    endDate: null,
+  });
+
+  const handleDateChange = ({ startDate, endDate }) => {
+    setSelectedDates({ startDate, endDate });
+  };
 
   return (
     <div className="app">
       <h1>Date Range Picker</h1>
-      <DateRangePicker minDate={minDate} maxDate={maxDate} startDate={initialStartDate} theme="dark-theme"/>
+      <DateRangePicker
+        minDate={minDate}
+        maxDate={maxDate}
+        startDate={initialStartDate}
+        onDateChange={handleDateChange}
+      />
+      <div>
+        <p>
+          Selected Start Date:{" "}
+          {selectedDates.startDate
+            ? selectedDates.startDate.toDateString()
+            : "None"}
+        </p>
+        <p>
+          Selected End Date:{" "}
+          {selectedDates.endDate
+            ? selectedDates.endDate.toDateString()
+            : "None"}
+        </p>
+      </div>
     </div>
   );
 };

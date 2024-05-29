@@ -16,7 +16,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import './DateRangePicker.css';
 
-const DateRangePicker = ({ minDate, maxDate, theme, startDate: initialStartDate }) => {
+const DateRangePicker = ({ minDate, maxDate, theme, startDate: initialStartDate, onDateChange }) => {
   const today = new Date();
   const isInitialStartDateWithinRange = initialStartDate && isWithinInterval(initialStartDate, { start: minDate, end: maxDate });
   const isTodayWithinRange = isWithinInterval(today, { start: minDate, end: maxDate });
@@ -28,22 +28,18 @@ const DateRangePicker = ({ minDate, maxDate, theme, startDate: initialStartDate 
       : minDate;
 
   const [currentMonth, setCurrentMonth] = useState(startOfMonth(initialDate));
-  const [startDate, setStartDate] = useState(initialDate);
+  const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [isSelecting, setIsSelecting] = useState(false);
   const [isYearMonthSelectorOpen, setIsYearMonthSelectorOpen] = useState(false);
   const [isMonthSelectorOpen, setIsMonthSelectorOpen] = useState(false);
-  const [yearRange, setYearRange] = useState({
-    start: minDate ? minDate.getFullYear() : currentMonth.getFullYear(),
-    end: (minDate ? minDate.getFullYear() : currentMonth.getFullYear()) + 19,
-  });
+  const [yearRange, setYearRange] = useState({ start: currentMonth.getFullYear(), end: currentMonth.getFullYear() + 19 });
 
   useEffect(() => {
-    if (initialStartDate && isInitialStartDateWithinRange) {
-      setStartDate(initialStartDate);
-      setCurrentMonth(startOfMonth(initialStartDate));
+    if (onDateChange) {
+      onDateChange({ startDate, endDate });
     }
-  }, [initialStartDate, isInitialStartDateWithinRange]);
+  }, [startDate, endDate, onDateChange]);
 
   const handleDateClick = (date) => {
     if (!isSelecting) {
@@ -78,13 +74,6 @@ const DateRangePicker = ({ minDate, maxDate, theme, startDate: initialStartDate 
   const handleHeaderClick = () => {
     setIsYearMonthSelectorOpen(!isYearMonthSelectorOpen);
     setIsMonthSelectorOpen(false);
-
-    if (minDate) {
-      setYearRange({
-        start: minDate.getFullYear(),
-        end: minDate.getFullYear() + 19,
-      });
-    }
   };
 
   const handlePrevYears = () => {
@@ -96,9 +85,9 @@ const DateRangePicker = ({ minDate, maxDate, theme, startDate: initialStartDate 
   };
 
   const handleNextYears = () => {
-    const newStart = yearRange.start + 20;
+    const newStart = yearRange.start;
     const newEnd = yearRange.end + 20;
-    if (!maxDate || newEnd <= maxDate.getFullYear()) {
+    if (!maxDate || newStart <= maxDate.getFullYear()) {
       setYearRange({ start: newStart, end: newEnd });
     }
   };
@@ -177,10 +166,11 @@ const DateRangePicker = ({ minDate, maxDate, theme, startDate: initialStartDate 
       const isDisabled = (minDate && day < minDate) || (maxDate && day > maxDate);
       const isSelected = isSameDay(day, startDate) || isSameDay(day, endDate);
       const isInRange = startDate && endDate && isWithinInterval(day, { start: startDate, end: endDate });
+      const isInitialStartDate = isSameDay(day, initialStartDate);
       return (
         <div
           key={day}
-          className={`day ${isSelected ? "selected" : ""} ${isInRange ? "in-range" : ""} ${!isSameMonth(day, start) ? "disabled" : ""} ${isDisabled ? "disabled" : ""}`}
+          className={`day ${isInitialStartDate ? "initial" : ""} ${isSelected ? "selected" : ""} ${isInRange ? "in-range" : ""} ${!isSameMonth(day, start) ? "disabled" : ""} ${isDisabled ? "disabled" : ""}`}
           onClick={() => !isDisabled && handleDateClick(day)}
         >
           {format(day, "d")}
@@ -201,7 +191,7 @@ const DateRangePicker = ({ minDate, maxDate, theme, startDate: initialStartDate 
           )}
           
           {isYearMonthSelectorOpen && (
-            <span onClick={handleHeaderClick}>Please Select a Year</span>
+            <span onClick={handleHeaderClick}>Please Select an Year</span>
           )}
           {!isYearMonthSelectorOpen && (
             <span onClick={handleHeaderClick}>{format(currentMonth, "MMMM yyyy")}</span>
